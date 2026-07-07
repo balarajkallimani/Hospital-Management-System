@@ -121,20 +121,20 @@ function PatientList() {
                 <th className="py-4 px-6">Phone</th>
                 <th className="py-4 px-6">Gender</th>
                 <th className="py-4 px-6">Blood Group</th>
-                {canModify && <th className="py-4 px-6 text-right">Actions</th>}
+                {(canModify || user?.role === 'doctor') && <th className="py-4 px-6 text-right">Actions</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/50 text-sm">
               {loading ? (
                 <tr>
-                  <td colSpan={canModify ? 6 : 5} className="py-12 text-center text-slate-500 font-mono">
+                  <td colSpan={(canModify || user?.role === 'doctor') ? 6 : 5} className="py-12 text-center text-slate-500 font-mono">
                     <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-primary mx-auto mb-2"></div>
                     Fetching records...
                   </td>
                 </tr>
               ) : patients.length === 0 ? (
                 <tr>
-                  <td colSpan={canModify ? 6 : 5} className="py-12 text-center text-slate-500">
+                  <td colSpan={(canModify || user?.role === 'doctor') ? 6 : 5} className="py-12 text-center text-slate-500">
                     No patient records found.
                   </td>
                 </tr>
@@ -146,14 +146,22 @@ function PatientList() {
                     <td className="py-4 px-6 text-slate-300 font-mono">{p.phone}</td>
                     <td className="py-4 px-6 capitalize text-slate-400">{p.gender}</td>
                     <td className="py-4 px-6 font-bold text-primary">{p.bloodGroup}</td>
-                    {canModify && (
+                    {(canModify || user?.role === 'doctor') && (
                       <td className="py-4 px-6 text-right space-x-2">
                         <Link
-                          to={`/patients/edit/${p._id}`}
-                          className="py-1.5 px-3 bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-300 rounded-lg text-xs transition border border-slate-700/40 inline-block"
+                          to={`/medical-records?patient=${p._id}`}
+                          className="py-1.5 px-3 bg-primary/15 hover:bg-primary/25 active:bg-primary/15 text-primary rounded-lg text-xs transition border border-primary/20 inline-block font-semibold"
                         >
-                          Edit
+                          Medical History
                         </Link>
+                        {canModify && (
+                          <Link
+                            to={`/patients/edit/${p._id}`}
+                            className="py-1.5 px-3 bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-300 rounded-lg text-xs transition border border-slate-700/40 inline-block"
+                          >
+                            Edit
+                          </Link>
+                        )}
                         {isAdmin && (
                           <button
                             onClick={() => handleDelete(p._id)}

@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 
 function MedicalRecordList() {
   const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const queryPatientId = searchParams.get('patient') || '';
+
   const [records, setRecords] = useState([]);
   const [patients, setPatients] = useState([]);
-  const [selectedPatientId, setSelectedPatientId] = useState('');
+  const [selectedPatientId, setSelectedPatientId] = useState(queryPatientId);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -26,6 +29,13 @@ function MedicalRecordList() {
       setLoading(false);
     }
   }, [isPatient]);
+
+  // Sync selected patient ID from URL query parameters
+  useEffect(() => {
+    if (queryPatientId) {
+      setSelectedPatientId(queryPatientId);
+    }
+  }, [queryPatientId]);
 
   // 2. Load timeline when doctor/staff selects a patient
   useEffect(() => {
@@ -106,7 +116,15 @@ function MedicalRecordList() {
           <div className="relative w-full sm:w-80">
             <select
               value={selectedPatientId}
-              onChange={(e) => setSelectedPatientId(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSelectedPatientId(val);
+                if (val) {
+                  setSearchParams({ patient: val });
+                } else {
+                  setSearchParams({});
+                }
+              }}
               className="w-full bg-slate-950 border border-slate-800 focus:border-primary rounded-xl py-2.5 pl-4 pr-10 outline-none text-sm transition text-slate-100 appearance-none cursor-pointer"
             >
               <option value="">-- Choose Patient File --</option>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 function PatientDashboard() {
@@ -33,16 +34,16 @@ function PatientDashboard() {
       {/* Actions */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
         <h3 className="text-lg font-bold text-slate-200 mb-4">Patient Operations</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          <button className="py-3 px-4 bg-primary hover:bg-primary-dark active:bg-primary-dark/80 text-white font-semibold rounded-xl transition">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-center">
+          <Link to="/appointments/new" className="py-3 px-4 bg-primary hover:bg-primary-dark active:bg-primary-dark/80 text-white font-semibold rounded-xl transition">
             Book Appointment
-          </button>
-          <button className="py-3 px-4 bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-200 font-semibold rounded-xl border border-slate-700/50 transition">
+          </Link>
+          <Link to="/medical-records" className="py-3 px-4 bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-200 font-semibold rounded-xl border border-slate-700/50 transition">
             My Medical History
-          </button>
-          <button className="py-3 px-4 bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-200 font-semibold rounded-xl border border-slate-700/50 transition">
+          </Link>
+          <Link to="/billing" className="py-3 px-4 bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-200 font-semibold rounded-xl border border-slate-700/50 transition">
             My Invoices / Payments
-          </button>
+          </Link>
         </div>
       </div>
     </div>
