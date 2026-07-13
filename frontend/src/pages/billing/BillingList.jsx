@@ -152,7 +152,7 @@ function BillingList() {
                 filteredBills.map((bill) => (
                   <tr key={bill._id} className="hover:bg-slate-950/30 transition">
                     <td className="py-4 px-6 font-semibold text-slate-200 font-mono">{bill.billNumber}</td>
-                    <td className="py-4 px-6 text-slate-300 font-medium">{bill.patient?.user?.name}</td>
+                    <td className="py-4 px-6 text-slate-300 font-medium">{bill.patient?.user?.name || 'Unknown Patient'}</td>
                     <td className="py-4 px-6 text-slate-400 font-mono">
                       {new Date(bill.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
                     </td>
@@ -255,8 +255,8 @@ function BillingList() {
               <div className="bg-slate-950/40 border border-slate-850 rounded-xl p-4 grid grid-cols-2 gap-4 text-xs">
                 <div>
                   <span className="text-slate-500 block font-mono">Billed To Patient:</span>
-                  <strong className="text-slate-200 text-sm">{activeInvoice.patient?.user?.name}</strong>
-                  <span className="text-slate-400 block font-mono mt-0.5">{activeInvoice.patient?.user?.email}</span>
+                  <strong className="text-slate-200 text-sm">{activeInvoice.patient?.user?.name || 'Unknown Patient'}</strong>
+                  <span className="text-slate-400 block font-mono mt-0.5">{activeInvoice.patient?.user?.email || 'N/A'}</span>
                 </div>
                 {activeInvoice.doctor && (
                   <div className="text-right">

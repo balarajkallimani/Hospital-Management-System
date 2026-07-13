@@ -57,6 +57,7 @@ function AppointmentList() {
     if (!dateStr) return '';
     const date = new Date(dateStr);
     return date.toLocaleDateString(undefined, {
+      timeZone: 'UTC',
       weekday: 'short',
       year: 'numeric',
       month: 'short',
@@ -134,14 +135,14 @@ function AppointmentList() {
                     {isPatient ? (
                       <>
                         <span className="text-[10px] uppercase font-bold text-primary font-mono">Consultant:</span>
-                        <h3 className="font-bold text-slate-200 text-lg">{app.doctor?.user?.name}</h3>
-                        <p className="text-xs text-slate-400 font-mono capitalize">{app.doctor?.specialization}</p>
+                        <h3 className="font-bold text-slate-200 text-lg">{app.doctor?.user?.name || 'Unknown Doctor'}</h3>
+                        <p className="text-xs text-slate-400 font-mono capitalize">{app.doctor?.specialization || 'N/A'}</p>
                       </>
                     ) : (
                       <>
                         <span className="text-[10px] uppercase font-bold text-primary font-mono">Patient:</span>
-                        <h3 className="font-bold text-slate-200 text-lg">{app.patient?.user?.name}</h3>
-                        <p className="text-xs text-slate-400 font-mono">Phone: {app.patient?.phone}</p>
+                        <h3 className="font-bold text-slate-200 text-lg">{app.patient?.user?.name || 'Unknown Patient'}</h3>
+                        <p className="text-xs text-slate-400 font-mono">Phone: {app.patient?.phone || 'N/A'}</p>
                       </>
                     )}
                     <span className="inline-block bg-slate-950 border border-slate-800 rounded-full px-2.5 py-0.5 text-xs text-slate-400 font-medium mt-1">

@@ -46,6 +46,12 @@ const createAppointment = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Please provide all required details' });
     }
 
+    // Verify Patient exists
+    const patientObj = await Patient.findById(patient);
+    if (!patientObj) {
+      return res.status(404).json({ success: false, message: 'Patient profile not found' });
+    }
+
     // 3. Find Doctor details and verify availability
     const doctorObj = await Doctor.findById(doctor);
     if (!doctorObj) {
@@ -55,8 +61,8 @@ const createAppointment = async (req, res) => {
     // Resolve day of the week from the date string (UTC timezone-safe parsing)
     const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const dateParts = date.split('-'); // ['YYYY', 'MM', 'DD']
-    const dateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
-    const dayName = daysOfWeek[dateObj.getDay()];
+    const dateObj = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
+    const dayName = daysOfWeek[dateObj.getUTCDay()];
 
     // Verify if doctor works on this day
     const daySchedule = doctorObj.availability.find((a) => a.day === dayName);
@@ -76,7 +82,7 @@ const createAppointment = async (req, res) => {
     }
 
     // 4. Prevent Double Booking (active appointment at same date/time)
-    const parsedDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+    const parsedDate = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
     const overlap = await Appointment.findOne({
       doctor,
       date: parsedDate,

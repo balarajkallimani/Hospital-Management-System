@@ -99,8 +99,8 @@ function AppointmentForm() {
     // Resolve day of the week from selected date string
     const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const dateParts = selectedDate.split('-'); // ['YYYY', 'MM', 'DD']
-    const dateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
-    const dayName = daysOfWeek[dateObj.getDay()];
+    const dateObj = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
+    const dayName = daysOfWeek[dateObj.getUTCDay()];
 
     // Find doctor schedule for this day
     const daySchedule = doctorObj.availability?.find((a) => a.day === dayName);

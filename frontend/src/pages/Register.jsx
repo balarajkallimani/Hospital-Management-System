@@ -96,7 +96,7 @@ function Register() {
               {...register('email', { 
                 required: 'Email address is required',
                 pattern: {
-                  value: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+                  value: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
                   message: 'Please enter a valid email address'
                 }
               })}
