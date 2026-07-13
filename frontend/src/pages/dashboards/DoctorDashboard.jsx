@@ -1,16 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 
 function DoctorDashboard() {
   const { user } = useAuth();
+  const [docProfileId, setDocProfileId] = useState(null);
+
+  // Fetch doctors list to find current doctor profile ID on mount
+  useEffect(() => {
+    const fetchDocProfile = async () => {
+      try {
+        const response = await axios.get('/api/doctors');
+        if (response.data && response.data.success) {
+          const currentDoc = response.data.doctors.find((d) => d.user?._id === user?.id);
+          if (currentDoc) {
+            setDocProfileId(currentDoc._id);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load doctor profile ID for dashboard:', err);
+      }
+    };
+    if (user?.id) {
+      fetchDocProfile();
+    }
+  }, [user]);
 
   // Mock Doctor Metrics
   const metrics = [
-    { title: 'Appointments Today', count: '6', color: 'bg-primary/10 text-primary border-primary/20' },
-    { title: 'Patients Checked In', count: '2', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
-    { title: 'Pending Reports', count: '3', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
-    { title: 'On-Call Status', count: 'Active', color: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' }
+    { title: 'Appointments Today', count: '6', color: 'bg-primary/10 text-primary border-primary/20', path: '/appointments' },
+    { title: 'Patients Checked In', count: '2', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', path: '/patients' },
+    { title: 'Pending Reports', count: '3', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20', path: '/medical-records' },
+    { title: 'On-Call Status', count: 'Active', color: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20', path: '/doctors' }
   ];
 
   return (
@@ -24,10 +46,14 @@ function DoctorDashboard() {
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {metrics.map((m, index) => (
-          <div key={index} className={`p-6 bg-slate-900 border rounded-xl flex flex-col justify-between ${m.color}`}>
+          <Link
+            key={index}
+            to={m.path}
+            className={`p-6 bg-slate-900 border rounded-xl flex flex-col justify-between hover:border-slate-700/80 transition ${m.color}`}
+          >
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">{m.title}</span>
             <span className="text-3xl font-extrabold mt-2">{m.count}</span>
-          </div>
+          </Link>
         ))}
       </div>
 
@@ -41,7 +67,10 @@ function DoctorDashboard() {
           <Link to="/patients" className="py-3 px-4 bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-200 font-semibold rounded-xl border border-slate-700/50 transition">
             Patient Search
           </Link>
-          <Link to="/doctors" className="py-3 px-4 bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-200 font-semibold rounded-xl border border-slate-700/50 transition">
+          <Link
+            to={docProfileId ? `/doctors/edit/${docProfileId}` : '/doctors'}
+            className="py-3 px-4 bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-200 font-semibold rounded-xl border border-slate-700/50 transition"
+          >
             Update Availability
           </Link>
         </div>

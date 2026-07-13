@@ -7,10 +7,10 @@ function PatientDashboard() {
 
   // Mock Patient Metrics
   const metrics = [
-    { title: 'Upcoming Visits', count: '1', color: 'bg-primary/10 text-primary border-primary/20' },
-    { title: 'Active Prescriptions', count: '2', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
-    { title: 'Pending Lab Reports', count: '0', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
-    { title: 'Outstanding Balance', count: '$0.00', color: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' }
+    { title: 'Upcoming Visits', count: '1', color: 'bg-primary/10 text-primary border-primary/20', path: '/appointments' },
+    { title: 'Active Prescriptions', count: '2', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', path: '/medical-records' },
+    { title: 'Pending Lab Reports', count: '0', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20', path: '/medical-records' },
+    { title: 'Outstanding Balance', count: '$0.00', color: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20', path: '/billing' }
   ];
 
   return (
@@ -24,10 +24,14 @@ function PatientDashboard() {
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {metrics.map((m, index) => (
-          <div key={index} className={`p-6 bg-slate-900 border rounded-xl flex flex-col justify-between ${m.color}`}>
+          <Link
+            key={index}
+            to={m.path}
+            className={`p-6 bg-slate-900 border rounded-xl flex flex-col justify-between hover:border-slate-700/80 transition ${m.color}`}
+          >
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">{m.title}</span>
             <span className="text-3xl font-extrabold mt-2">{m.count}</span>
-          </div>
+          </Link>
         ))}
       </div>
 

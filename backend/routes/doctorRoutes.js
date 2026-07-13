@@ -24,8 +24,8 @@ router.get('/', protect, getDoctors);
 router.get('/:id', protect, getDoctorById);
 
 // Route:  PUT /api/doctors/:id
-// Access: Private (Admin only)
-router.put('/:id', protect, restrictTo('admin'), updateDoctor);
+// Access: Private (Admin and Doctor)
+router.put('/:id', protect, restrictTo('admin', 'doctor'), updateDoctor);
 
 // Route:  DELETE /api/doctors/:id
 // Access: Private (Admin only)

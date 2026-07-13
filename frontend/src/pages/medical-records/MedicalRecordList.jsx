@@ -26,15 +26,15 @@ function MedicalRecordList() {
     } else {
       // Staff & Doctors need to load the patients directory for the selector dropdown
       fetchPatients();
-      setLoading(false);
+      if (!queryPatientId) {
+        setLoading(false);
+      }
     }
-  }, [isPatient]);
+  }, [isPatient, queryPatientId]);
 
-  // Sync selected patient ID from URL query parameters
+  // Sync selected patient ID from URL query parameters (including clearing)
   useEffect(() => {
-    if (queryPatientId) {
-      setSelectedPatientId(queryPatientId);
-    }
+    setSelectedPatientId(queryPatientId);
   }, [queryPatientId]);
 
   // 2. Load timeline when doctor/staff selects a patient
@@ -43,6 +43,7 @@ function MedicalRecordList() {
       fetchPatientRecords(selectedPatientId);
     } else if (!isPatient) {
       setRecords([]);
+      setLoading(false);
     }
   }, [selectedPatientId, isPatient]);
 

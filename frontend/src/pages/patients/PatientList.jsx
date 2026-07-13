@@ -13,9 +13,10 @@ function PatientList() {
   const [totalPatients, setTotalPatients] = useState(0);
   const [error, setError] = useState('');
 
-  // Allowed to write/edit/delete
-  const canModify = user?.role === 'admin' || user?.role === 'receptionist';
-  const isAdmin = user?.role === 'admin';
+  // Action permissions configuration
+  const canCreate = user?.role === 'admin' || user?.role === 'receptionist';
+  const canEdit = user?.role === 'admin' || user?.role === 'receptionist' || user?.role === 'doctor';
+  const canDelete = user?.role === 'admin';
 
   // Fetch patients when search or page changes
   useEffect(() => {
@@ -77,7 +78,7 @@ function PatientList() {
           <h2 className="text-xl font-bold text-slate-100">Patient Database</h2>
           <p className="text-sm text-slate-400 mt-1">Manage and view all registered hospital patients.</p>
         </div>
-        {canModify && (
+        {canCreate && (
           <Link
             to="/patients/new"
             className="py-2.5 px-4 bg-primary hover:bg-primary-dark text-white text-sm font-semibold rounded-xl transition shadow-lg shadow-primary/20"
@@ -121,20 +122,20 @@ function PatientList() {
                 <th className="py-4 px-6">Phone</th>
                 <th className="py-4 px-6">Gender</th>
                 <th className="py-4 px-6">Blood Group</th>
-                {(canModify || user?.role === 'doctor') && <th className="py-4 px-6 text-right">Actions</th>}
+                {canEdit && <th className="py-4 px-6 text-right">Actions</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/50 text-sm">
               {loading ? (
                 <tr>
-                  <td colSpan={(canModify || user?.role === 'doctor') ? 6 : 5} className="py-12 text-center text-slate-500 font-mono">
+                  <td colSpan={canEdit ? 6 : 5} className="py-12 text-center text-slate-500 font-mono">
                     <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-primary mx-auto mb-2"></div>
                     Fetching records...
                   </td>
                 </tr>
               ) : patients.length === 0 ? (
                 <tr>
-                  <td colSpan={(canModify || user?.role === 'doctor') ? 6 : 5} className="py-12 text-center text-slate-500">
+                  <td colSpan={canEdit ? 6 : 5} className="py-12 text-center text-slate-500">
                     No patient records found.
                   </td>
                 </tr>
@@ -146,7 +147,7 @@ function PatientList() {
                     <td className="py-4 px-6 text-slate-300 font-mono">{p.phone}</td>
                     <td className="py-4 px-6 capitalize text-slate-400">{p.gender}</td>
                     <td className="py-4 px-6 font-bold text-primary">{p.bloodGroup}</td>
-                    {(canModify || user?.role === 'doctor') && (
+                    {canEdit && (
                       <td className="py-4 px-6 text-right space-x-2">
                         <Link
                           to={`/medical-records?patient=${p._id}`}
@@ -154,7 +155,7 @@ function PatientList() {
                         >
                           Medical History
                         </Link>
-                        {canModify && (
+                        {canEdit && (
                           <Link
                             to={`/patients/edit/${p._id}`}
                             className="py-1.5 px-3 bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-300 rounded-lg text-xs transition border border-slate-700/40 inline-block"
@@ -162,7 +163,7 @@ function PatientList() {
                             Edit
                           </Link>
                         )}
-                        {isAdmin && (
+                        {canDelete && (
                           <button
                             onClick={() => handleDelete(p._id)}
                             className="py-1.5 px-3 bg-rose-500/10 hover:bg-rose-500/20 active:bg-rose-500/10 text-rose-400 rounded-lg text-xs transition border border-rose-500/20"

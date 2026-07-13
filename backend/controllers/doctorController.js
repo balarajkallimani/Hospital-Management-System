@@ -138,6 +138,11 @@ const updateDoctor = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Doctor profile not found' });
     }
 
+    // Guard: Doctors can only edit their own profile
+    if (req.user.role === 'doctor' && doctor.user.toString() !== req.user.id) {
+      return res.status(403).json({ success: false, message: "Not authorized to update another doctor's profile" });
+    }
+
     // 2. Update linked User name if supplied
     if (name) {
       await User.findByIdAndUpdate(doctor.user, { name });

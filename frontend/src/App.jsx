@@ -123,11 +123,11 @@ function App() {
               } 
             />
 
-            {/* Patient Edit Form (Authorized for Admins/Receptionists) */}
+            {/* Patient Edit Form (Authorized for Admins/Receptionists/Doctors) */}
             <Route 
               path="patients/edit/:id" 
               element={
-                <RoleRoute allowedRoles={['admin', 'receptionist']}>
+                <RoleRoute allowedRoles={['admin', 'receptionist', 'doctor']}>
                   <PatientForm />
                 </RoleRoute>
               } 
@@ -153,7 +153,7 @@ function App() {
             <Route 
               path="doctors/edit/:id" 
               element={
-                <RoleRoute allowedRoles={['admin']}>
+                <RoleRoute allowedRoles={['admin', 'doctor']}>
                   <DoctorForm />
                 </RoleRoute>
               } 
