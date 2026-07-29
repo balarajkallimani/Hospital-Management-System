@@ -16,7 +16,6 @@ function MedicalRecordList() {
 
   const isPatient = user?.role === 'patient';
   const isDoctor = user?.role === 'doctor';
-  const isStaff = user?.role === 'admin' || user?.role === 'receptionist';
 
   // 1. Initial loads based on role
   useEffect(() => {

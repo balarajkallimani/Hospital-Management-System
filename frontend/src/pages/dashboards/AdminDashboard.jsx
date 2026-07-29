@@ -17,7 +17,7 @@ function AdminDashboard() {
     <div className="space-y-6">
       {/* Banner */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-        <h2 className="text-xl font-bold text-slate-100">System Admin Control Center</h2>
+        <h2 className="text-xl font-bold text-slate-100">Welcome, {user?.name || 'Administrator'}</h2>
         <p className="text-sm text-slate-400 mt-1">Configure staff details, monitor registrations, and verify server diagnostics.</p>
       </div>
 

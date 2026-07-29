@@ -35,6 +35,7 @@ function Login() {
         setApiError(result.message);
       }
     } catch (err) {
+      console.error('Login error:', err);
       setApiError('An unexpected error occurred. Please try again.');
     } finally {
       setIsSubmitting(false);

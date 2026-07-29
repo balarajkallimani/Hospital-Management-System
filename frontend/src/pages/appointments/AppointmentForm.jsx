@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
@@ -29,29 +29,34 @@ function AppointmentForm() {
   const [apiError, setApiError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 1. Fetch departments and patients on mount
-  useEffect(() => {
-    fetchDepartments();
-    if (isStaff) {
-      fetchPatients();
-    }
-  }, [isStaff]);
-
-  // 2. Fetch doctors when department changes
-  useEffect(() => {
-    if (selectedDept) {
-      fetchDoctorsInDept(selectedDept);
-      setSelectedDocId('');
+  const calculateAvailableSlots = useCallback(() => {
+    if (!selectedDocId || !selectedDate) {
       setAvailableSlots([]);
-    } else {
-      setDoctors([]);
+      setScheduleStatusMessage('Please select a doctor and date to view available time slots.');
+      return;
     }
-  }, [selectedDept]);
 
-  // 3. Recalculate slots when doctor or date changes
-  useEffect(() => {
-    calculateAvailableSlots();
-  }, [selectedDocId, selectedDate]);
+    const doctorObj = doctors.find((doc) => doc._id === selectedDocId);
+    if (!doctorObj) return;
+
+    // Resolve day of the week from selected date string
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const dateParts = selectedDate.split('-'); // ['YYYY', 'MM', 'DD']
+    const dateObj = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
+    const dayName = daysOfWeek[dateObj.getUTCDay()];
+
+    // Find doctor schedule for this day
+    const daySchedule = doctorObj.availability?.find((a) => a.day === dayName);
+
+    if (!daySchedule || daySchedule.slots.length === 0) {
+      setAvailableSlots([]);
+      setScheduleStatusMessage(`Doctor is not available on ${dayName}s. Please choose another date.`);
+    } else {
+      setAvailableSlots(daySchedule.slots);
+      setSelectedTimeSlot(''); // Reset selection
+      setScheduleStatusMessage('');
+    }
+  }, [selectedDocId, selectedDate, doctors]);
 
   const fetchDepartments = async () => {
     try {
@@ -86,34 +91,29 @@ function AppointmentForm() {
     }
   };
 
-  const calculateAvailableSlots = () => {
-    if (!selectedDocId || !selectedDate) {
-      setAvailableSlots([]);
-      setScheduleStatusMessage('Please select a doctor and date to view available time slots.');
-      return;
+  // 1. Fetch departments and patients on mount
+  useEffect(() => {
+    fetchDepartments();
+    if (isStaff) {
+      fetchPatients();
     }
+  }, [isStaff]);
 
-    const doctorObj = doctors.find((doc) => doc._id === selectedDocId);
-    if (!doctorObj) return;
-
-    // Resolve day of the week from selected date string
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const dateParts = selectedDate.split('-'); // ['YYYY', 'MM', 'DD']
-    const dateObj = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
-    const dayName = daysOfWeek[dateObj.getUTCDay()];
-
-    // Find doctor schedule for this day
-    const daySchedule = doctorObj.availability?.find((a) => a.day === dayName);
-
-    if (!daySchedule || daySchedule.slots.length === 0) {
+  // 2. Fetch doctors when department changes
+  useEffect(() => {
+    if (selectedDept) {
+      fetchDoctorsInDept(selectedDept);
+      setSelectedDocId('');
       setAvailableSlots([]);
-      setScheduleStatusMessage(`Doctor is not available on ${dayName}s. Please choose another date.`);
     } else {
-      setAvailableSlots(daySchedule.slots);
-      setSelectedTimeSlot(''); // Reset selection
-      setScheduleStatusMessage('');
+      setDoctors([]);
     }
-  };
+  }, [selectedDept]);
+
+  // 3. Recalculate slots when doctor or date changes
+  useEffect(() => {
+    calculateAvailableSlots();
+  }, [calculateAvailableSlots]);
 
   const handleBooking = async (e) => {
     e.preventDefault();

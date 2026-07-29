@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
@@ -18,12 +18,7 @@ function PatientList() {
   const canEdit = user?.role === 'admin' || user?.role === 'receptionist' || user?.role === 'doctor';
   const canDelete = user?.role === 'admin';
 
-  // Fetch patients when search or page changes
-  useEffect(() => {
-    fetchPatients();
-  }, [search, page]);
-
-  const fetchPatients = async () => {
+  const fetchPatients = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
@@ -47,7 +42,12 @@ function PatientList() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, page]);
+
+  // Fetch patients when search or page changes
+  useEffect(() => {
+    fetchPatients();
+  }, [fetchPatients]);
 
   const handleDelete = async (patientId) => {
     if (!window.confirm('Are you sure you want to permanently delete this patient and their login account?')) {

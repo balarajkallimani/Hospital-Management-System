@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
@@ -13,28 +13,7 @@ function DoctorList() {
 
   const isAdmin = user?.role === 'admin';
 
-  // Fetch departments and doctors on mount
-  useEffect(() => {
-    fetchDepartments();
-  }, []);
-
-  // Re-fetch doctors whenever department filter changes
-  useEffect(() => {
-    fetchDoctors();
-  }, [selectedDept]);
-
-  const fetchDepartments = async () => {
-    try {
-      const response = await axios.get('/api/departments');
-      if (response.data && response.data.success) {
-        setDepartments(response.data.departments);
-      }
-    } catch (err) {
-      console.error('Failed to load departments', err);
-    }
-  };
-
-  const fetchDoctors = async () => {
+  const fetchDoctors = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
@@ -51,6 +30,27 @@ function DoctorList() {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  }, [selectedDept]);
+
+  // Fetch departments and doctors on mount
+  useEffect(() => {
+    fetchDepartments();
+  }, []);
+
+  // Re-fetch doctors whenever department filter changes
+  useEffect(() => {
+    fetchDoctors();
+  }, [fetchDoctors]);
+
+  const fetchDepartments = async () => {
+    try {
+      const response = await axios.get('/api/departments');
+      if (response.data && response.data.success) {
+        setDepartments(response.data.departments);
+      }
+    } catch (err) {
+      console.error('Failed to load departments', err);
     }
   };
 

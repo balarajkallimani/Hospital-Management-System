@@ -4,8 +4,8 @@ import axios from 'axios';
 // Create the Context
 const AuthContext = createContext(null);
 
-// Configure the base URL for Axios globally
-axios.defaults.baseURL = 'http://localhost:5000';
+// Configure the base URL for Axios globally (defaults to localhost:5000 for local dev or environment variable for deployment)
+axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);

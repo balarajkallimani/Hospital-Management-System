@@ -16,7 +16,6 @@ function BillingList() {
   // Invoice Details Modal state
   const [activeInvoice, setActiveInvoice] = useState(null);
 
-  const isPatient = user?.role === 'patient';
   const isStaff = user?.role === 'admin' || user?.role === 'receptionist';
 
   useEffect(() => {

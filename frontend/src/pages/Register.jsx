@@ -37,6 +37,7 @@ function Register() {
         setApiError(result.message);
       }
     } catch (err) {
+      console.error('Registration error:', err);
       setApiError('An unexpected error occurred. Please try again.');
     } finally {
       setIsSubmitting(false);

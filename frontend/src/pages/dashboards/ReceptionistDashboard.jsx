@@ -17,7 +17,7 @@ function ReceptionistDashboard() {
     <div className="space-y-6">
       {/* Banner */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-        <h2 className="text-xl font-bold text-slate-100">Intake Desk Workstation</h2>
+        <h2 className="text-xl font-bold text-slate-100">Welcome, {user?.name || 'Receptionist'}</h2>
         <p className="text-sm text-slate-400 mt-1">Register incoming patients, check in scheduled appointments, and generate billing invoices.</p>
       </div>
 
